@@ -105,6 +105,16 @@ const extractAge = (ageString) => {
     return match ? parseInt(match[1]) : 0;
 };
 
+// ✅ Date range helper
+const isDateInRange = (dateStr, from, to) => {
+    if (!dateStr) return false;
+    const date = new Date(dateStr);
+    if (from && date < new Date(from)) return false;
+    if (to && date > new Date(to)) return false;
+    return true;
+};
+
+
 // Field Definitions based on your model
 const ALL_FIELDS = {
     // Personal Details
@@ -372,6 +382,43 @@ const AdvancedFilters = ({ values, setFieldValue, filters }) => (
                 />
             </Box>
 
+            <TextField
+                size="small"
+                label="Joining Date From"
+                type="date"
+                value={values.joiningFrom}
+                onChange={(e) => setFieldValue("joiningFrom", e.target.value)}
+                InputLabelProps={{ shrink: true }}
+            />
+
+            <TextField
+                size="small"
+                label="Joining Date To"
+                type="date"
+                value={values.joiningTo}
+                onChange={(e) => setFieldValue("joiningTo", e.target.value)}
+                InputLabelProps={{ shrink: true }}
+            />
+
+            <TextField
+                size="small"
+                label="Retirement Date From"
+                type="date"
+                value={values.retirementFrom}
+                onChange={(e) => setFieldValue("retirementFrom", e.target.value)}
+                InputLabelProps={{ shrink: true }}
+            />
+
+            <TextField
+                size="small"
+                label="Retirement Date To"
+                type="date"
+                value={values.retirementTo}
+                onChange={(e) => setFieldValue("retirementTo", e.target.value)}
+                InputLabelProps={{ shrink: true }}
+            />
+
+
             {/* Caste Filter */}
             <FormControl size="small" sx={{ minWidth: 150 }}>
                 <InputLabel>Category</InputLabel>
@@ -394,6 +441,10 @@ const AdvancedFilters = ({ values, setFieldValue, filters }) => (
                 setFieldValue("casteFilter", "all");
                 setFieldValue("minAge", "");
                 setFieldValue("maxAge", "");
+                setFieldValue("joiningFrom", "");
+                setFieldValue("joiningTo", "");
+                setFieldValue("retirementFrom", "");
+                setFieldValue("retirementTo", "");
                 setFieldValue("viewType", "all");
                 setFieldValue("civilScoreFilter", "all");
             }}>
@@ -420,6 +471,10 @@ const AdvancedFilters = ({ values, setFieldValue, filters }) => (
                         {values.casteFilter !== "all" && <span style={{ marginLeft: 8 }}><strong>Category:</strong> {values.casteFilter}</span>}
                         {values.minAge && <span style={{ marginLeft: 8 }}><strong>Min Age:</strong> {values.minAge}</span>}
                         {values.maxAge && <span style={{ marginLeft: 8 }}><strong>Max Age:</strong> {values.maxAge}</span>}
+                        {values.joiningFrom && <span><strong>Joining From:</strong> {values.joiningFrom}</span>}
+                        {values.joiningTo && <span><strong>Joining To:</strong> {values.joiningTo}</span>}
+                        {values.retirementFrom && <span><strong>Retirement From:</strong> {values.retirementFrom}</span>}
+                        {values.retirementTo && <span><strong>Retirement To:</strong> {values.retirementTo}</span>}
                         {values.viewType !== "all" && <span style={{ marginLeft: 8 }}><strong>View Type:</strong> {values.viewType}</span>}
                         {values.selectedField === "personalDetails.civilScore" && values.civilScoreFilter !== "all" &&
                             <span style={{ marginLeft: 8 }}><strong>Civil Score:</strong> {CIVIL_SCORE_FILTERS[values.civilScoreFilter]}</span>}
@@ -562,7 +617,11 @@ const MissingMembersTable = () => {
                 maritalFilter: "all",
                 casteFilter: "all",
                 minAge: "",
-                maxAge: ""
+                maxAge: "",
+                joiningFrom: "",
+                joiningTo: "",
+                retirementFrom: "",
+                retirementTo: ""
             }} onSubmit={() => { }}>
                 {({ values, setFieldValue }) => {
                     // Derived filter options
@@ -603,10 +662,39 @@ const MissingMembersTable = () => {
                                     "addressDetails.currentResidentalAddress.city",
                                 ];
 
+
                                 return searchable.some(path => {
                                     const v = getValueByPath(m, path);
                                     return v?.toString()?.toLowerCase()?.includes(searchTerm);
                                 });
+                            });
+                        }
+
+                        if (values.joiningFrom || values.joiningTo) {
+                            result = result.filter(m => {
+                                const joiningDate = getValueByPath(
+                                    m,
+                                    "professionalDetails.serviceDetails.dateOfJoining"
+                                );
+                                return isDateInRange(
+                                    joiningDate,
+                                    values.joiningFrom,
+                                    values.joiningTo
+                                );
+                            });
+                        }
+
+                        if (values.retirementFrom || values.retirementTo) {
+                            result = result.filter(m => {
+                                const retirementDate = getValueByPath(
+                                    m,
+                                    "professionalDetails.serviceDetails.dateOfRetirement"
+                                );
+                                return isDateInRange(
+                                    retirementDate,
+                                    values.retirementFrom,
+                                    values.retirementTo
+                                );
                             });
                         }
 
