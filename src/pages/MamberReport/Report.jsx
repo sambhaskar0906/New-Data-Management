@@ -497,6 +497,14 @@ const getActiveFilterColumns = (values) => {
     // Age adds Age column
     if (values.minAge !== "" || values.maxAge !== "") cols.push("personalDetails.ageInYears");
 
+    // 🔥 JOINING DATE
+    if (values.joiningFrom || values.joiningTo)
+        cols.push("professionalDetails.serviceDetails.dateOfJoining");
+
+    // 🔥 RETIREMENT DATE
+    if (values.retirementFrom || values.retirementTo)
+        cols.push("professionalDetails.serviceDetails.dateOfRetirement");
+
     // Category → All fields under that category
     if (values.categoryFilter !== "all") {
         FIELD_GROUPS[values.categoryFilter].fields.forEach(f => cols.push(f));
