@@ -146,6 +146,7 @@ const MemberDossierForm = () => {
       passportPhoto: null,
       passportPreview: "",
       signedPhoto: "",
+      oldMembershipPdf: null,
     },
 
     professionalDetails: {
@@ -398,6 +399,13 @@ const MemberDossierForm = () => {
           formDataToSend.append(dbKey, idProofs[formKey]);
         }
       });
+
+      // 🔥 OLD MEMBERSHIP PDF
+      formDataToSend.append(
+        "documents[oldMembershipPdf]",
+        values.identityProofs.oldMembershipPdf
+      );
+
 
       /* -----------------------------------------
          PROFESSIONAL DETAILS

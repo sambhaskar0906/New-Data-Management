@@ -4,6 +4,7 @@ import memberReducer from "../features/member/memberSlice";
 import noticeReducer from '../features/notice/noticeSlice';
 import loanReducer from '../features/loan/loanSlice';
 import whatsappNoticeReducer from "../features/whatsappNotice/whatsappNoticeSlice";
+import authReducer from "../features/auth/authSlice";
 
 export const store = configureStore({
     reducer: {
@@ -12,6 +13,7 @@ export const store = configureStore({
         notice: noticeReducer,
         loan: loanReducer,
         whatsappNotice: whatsappNoticeReducer,
+        auth: authReducer,
     },
 });
 
